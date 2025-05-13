@@ -67,7 +67,6 @@ def parse_arguments() -> SimpleNamespace:
 
 if __name__ == '__main__':
     args = parse_arguments()
-
     convs_list = np.loadtxt(args.conversations_list_filename, dtype=object)
     wav_dict = kaldi_data.load_wav_scp(args.input_wav_scp)
 
@@ -111,8 +110,8 @@ if __name__ == '__main__':
             signal = wav_dict[fname]
 
             # Randomly select a room impulse response
-            choice_rir = random.choice(all_rirs)
-            if random.random() < speech_rvb_probability:
+            choice_rir = random.choice(all_rirs) if all_rirs else None
+            if choice_rir is not None and random.random() < speech_rvb_probability:
                 rir = rirs[choice_rir]
             else:
                 rir = None
@@ -143,10 +142,10 @@ if __name__ == '__main__':
                 end = data.shape[0]
             out[pos:pos+end-strt] += data[strt:end]
 
-        noise = random.choice(all_noises)
-        noise_snr = random.choice(noise_snrs)
         if args.use_noises:
             # noise is repeated or cut for fitting to the mixture data length
+            noise = random.choice(all_noises)
+            noise_snr = random.choice(noise_snrs)
             noise_resampled = kaldi_data.process_wav(noise, resample_cmd)
             noise_data, _ = kaldi_data.load_wav(noise_resampled)
             if last_seg_end > len(noise_data):

@@ -2,13 +2,16 @@
 . ./path.sh
 
 DIR="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+# DIR=/mnt/nas/original_datasets/voxpopuli/EEND_dataprep
 
-WAV_DIR=<VoxPopuli audios dir>
+# WAV_DIR="/mnt/nas/original_datasets/voxpopuli/wav"
+WAV_DIR="/mnt/nas/original_datasets/voxpopuli/labelled_data_for_sc"
 
 if [ ! -d $DIR/Kaldidatadir/all ]; then
 	mkdir -p $DIR/Kaldidatadir/all
-	find $WAV_DIR -type f | sed "s $WAV_DIR/  g" | sed 's/....$//' > $DIR/Kaldidatadir/all/files.txt
-	awk -v WAV_DIR=$WAV_DIR -F"/" '{print $1"_"$2"_"$3" "WAV_DIR"/"$0".wav"}' $DIR/Kaldidatadir/all/files.txt > $DIR/Kaldidatadir/all/wav.scp
+	# find $WAV_DIR -type f | sed "s $WAV_DIR/  g" | sed 's/....$//' > $DIR/Kaldidatadir/all/files.txt
+	find $WAV_DIR -type l | sed "s $WAV_DIR/  g" | sed 's/....$//' > $DIR/Kaldidatadir/all/files.txt # for symlinks
+	awk -v WAV_DIR=$WAV_DIR -F"/" '{print $1"_"$2"_"$3" "WAV_DIR"/"$0".ogg"}' $DIR/Kaldidatadir/all/files.txt > $DIR/Kaldidatadir/all/wav.scp
 	awk -F"/" '{print $1"_"$2"_"$3" "$1"_"$2}' $DIR/Kaldidatadir/all/files.txt > $DIR/Kaldidatadir/all/utt2spk
 	$KALDI_ROOT/egs/wsj/s5/utils/utt2spk_to_spk2utt.pl $DIR/Kaldidatadir/all/utt2spk > $DIR/Kaldidatadir/all/spk2utt
 fi

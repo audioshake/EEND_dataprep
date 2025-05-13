@@ -1,2 +1,7 @@
+cffi==1.17.1
 numpy==1.21.2
+pip==21.1.1
+pycparser==2.22
 scipy==1.4.1
+setuptools==56.0.0
+soundfile==0.13.1
